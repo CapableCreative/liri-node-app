@@ -10,14 +10,17 @@
 
 // required npm packages - see also package.json for dependencies
 var axios = require('axios');
+var file = require('file-system');
 var fs = require('fs');
+file.readFile === fs.readFile
+
 
 // setting entered criteria within node (index position 2 and 3 (since 1 is node, and 2 is the application))
 var searchType = process.argv[2]; 
 var searchTerm = process.argv[3]
 
 // the function determining the sort of search; this should be a switch case, but I set it up as if/else
-function liriApp(x) {
+function liriApp(x, y) {
   if (x === 'Song' || x === 'song') {
     // Added to allow spotify credentials to be obfuscated via .env
     require("dotenv").config();
@@ -26,7 +29,7 @@ function liriApp(x) {
     var Spotify = require('node-spotify-api');
     var spotify = new Spotify(keys.spotify);
     spotify
-    .search({ type: 'track', query: searchTerm })
+    .search({ type: 'track', query: searchTerm || y })
     .then(function(response) {
         artistName(response.tracks.items);
     })
@@ -111,10 +114,25 @@ function liriApp(x) {
       console.log(error.config);
     });
   }  
-  else {
-    console.log('ERROR -- What type of search? Type "Song", "Concert", or "Movie" to define your search type.')
+  else if (x === 'do-what-it-says') {
+    fs.readFile('random.txt', function read(err, data) {
+        if (err) {
+            throw err;
+        }
+        var content = data;
+        // Invoke the next step here however you like
+        // Or put the next step in a function and invoke it
+        console.log('+++++' + data)
+        datString = data.toString();
+        console.log('=======================' + datString);
+        //console.log('+++++++++++++++++++++++' + dSplit);
+        datSplit = datString.split(' ');
+        console.log(datSplit);
+      liriApp(datSplit[0], datSplit[1]);   
+    });
+
   }
 }
 
 // calling the liriApp function to execute based on user entered data
-liriApp(searchType);
+liriApp(searchType, searchTerm);
