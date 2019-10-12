@@ -14,14 +14,13 @@ var file = require('file-system');
 var fs = require('fs');
 file.readFile === fs.readFile
 
-
 // setting entered criteria within node (index position 2 and 3 (since 1 is node, and 2 is the application))
 var searchType = process.argv[2]; 
-var searchTerm = process.argv[3]
+var searchTerm = process.argv[3];
 
 // the function determining the sort of search; this should be a switch case, but I set it up as if/else
 function liriApp(x, y) {
-  if (x === 'Song' || x === 'song') {
+  if (x === 'song' || x === 'Song') {
     // Added to allow spotify credentials to be obfuscated via .env
     require("dotenv").config();
     // Added based on node-spotify-api specs
@@ -31,12 +30,14 @@ function liriApp(x, y) {
     spotify
     .search({ type: 'track', query: searchTerm || y })
     .then(function(response) {
+      // pass object path to artistName function called below
         artistName(response.tracks.items);
     })
     .catch(function(err) {
       console.log(err);
     });
     function artistName(answer){
+      // loop through the artist name object based on a limit of 20 items (manually; however the API allows a limit (which would likely have been better))
       for (var i = 0; i < 20; i++) {
         console.log(' ');
         console.log('= SONG RESULT NUMBER: ' + (i+1) + ' =============================================================================')
@@ -53,9 +54,9 @@ function liriApp(x, y) {
   else if (x === 'Concert'|| x === 'concert') {
     var bandsTown = "https://rest.bandsintown.com/artists/";
     var sortPlus = "/events?app_id=codingbootcamp";
-
     axios.get(bandsTown + searchTerm + sortPlus).then(function(response) {
       concertData(response.data);
+      // pass response data to concertData function below
     });
     function concertData(bandData){
       for (var j = 0; j < bandData.length && j < 20; j++){
@@ -95,22 +96,19 @@ function liriApp(x, y) {
     })
     .catch(function(error) {
       if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        console.log("---------------Data---------------");
+        console.log("ERROR DATA --------------------------------");
         console.log(error.response.data);
-        console.log("---------------Status---------------");
+        console.log("ERROR STATUS ------------------------------");
         console.log(error.response.status);
-        console.log("---------------Status---------------");
+        console.log("ERROR -------------------------------------");
         console.log(error.response.headers);
       } else if (error.request) {
-        // The request was made but no response was received
-        // `error.request` is an object that comes back with details pertaining to the error that occurred.
+        // No response to the request
         console.log(error.request);
       } else {
-        // Something happened in setting up the request that triggered an Error
         console.log("Error", error.message);
       }
+      // Assume the error is in the liri.js
       console.log(error.config);
     });
   }  
@@ -122,7 +120,7 @@ function liriApp(x, y) {
         var content = data;
         // Invoke the next step here however you like
         // Or put the next step in a function and invoke it
-        console.log('+++++' + data)
+        console.log('+++++' + data);
         datString = data.toString();
         console.log('=======================' + datString);
         //console.log('+++++++++++++++++++++++' + dSplit);
